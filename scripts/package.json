@@ -1,0 +1,20 @@
+{
+  "name": "nft-indexer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "index": "tsx indexer.ts",
+    "index:test": "BATCH_SIZE=5 MAX_TOKENS=10 tsx indexer.ts",
+    "upload": "tsx upload-to-cloudflare.ts",
+    "import": "tsx import-existing.ts"
+  },
+  "dependencies": {
+    "ethers": "^6.10.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}

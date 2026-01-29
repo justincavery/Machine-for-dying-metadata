@@ -12,3 +12,16 @@ docs/
 
 # Dotenv file
 .env
+
+# Node.js
+node_modules/
+
+# Indexed data (large, generated)
+indexed-data/
+
+# Build outputs
+frontend/dist/
+workers/dist/
+
+# Wrangler
+.wrangler/

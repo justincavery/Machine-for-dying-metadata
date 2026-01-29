@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attributes - A Machine For Dying</title>
+  <meta name="description" content="Explore attributes and traits in A Machine For Dying NFT collection">
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1><a href="/">A Machine For Dying</a></h1>
+      <nav>
+        <a href="/">Gallery</a>
+        <a href="/attributes.html" class="active">Attributes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="attributes-page">
+    <h2>Collection Attributes</h2>
+    <p class="subtitle">Click on any trait value to view NFTs with that attribute</p>
+
+    <div id="loading" class="loading">Loading attributes...</div>
+
+    <div id="attributesContent" style="display: none;">
+      <div id="traitsList" class="traits-list"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>NFT Contract: <a href="https://etherscan.io/address/0x3965dEE5ef611d4dd74FC6B6c54c37F643208A5C" target="_blank">0x3965...208A5C</a></p>
+  </footer>
+
+  <script type="module" src="./scripts/attributes.js"></script>
+</body>
+</html>

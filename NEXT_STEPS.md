@@ -67,19 +67,19 @@ Copy this template and fill it out:
 READY TO START ✅
 
 CLOUDFLARE:
-- Account ID: [from dashboard]
-- D1 Database ID: [from wrangler output]
+- Account ID: afe03c709e863bbdc506ec2ff7c11f28
+- D1 Database ID: 8d1f33b2-791c-4596-bc38-092c2430f2ca
 - R2 Bucket: nft-images ✅
 
 ETHEREUM RPC:
-- Provider: [Alchemy/Infura/Public]
-- RPC URL: [your RPC endpoint]
+- Provider: NFTX
+- RPC URL: https://eth-mainnet.nftx.xyz/a/shahv8futobaiwop
 
 TIMELINE:
-- Target: [ASAP / 4-6 weeks / Flexible]
+- Target: ASAP
 
 APPROACH:
-- Using: GitHub Copilot ✅
+- Using: Claude
 ```
 
 ### Step 4: Reply "Ready for Phase 1"

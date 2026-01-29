@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Details - A Machine For Dying</title>
+  <meta name="description" content="View NFT details from A Machine For Dying collection">
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1><a href="/">A Machine For Dying</a></h1>
+      <nav>
+        <a href="/">Gallery</a>
+        <a href="/attributes.html">Attributes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="nft-detail-page">
+    <div id="loading" class="loading">Loading NFT...</div>
+
+    <div id="nftContent" class="nft-detail" style="display: none;">
+      <div class="nft-image-container">
+        <img id="nftImage" alt="NFT Image">
+        <div class="image-actions">
+          <button id="downloadBtn" class="btn-primary">Download SVG</button>
+          <a id="openNewTab" target="_blank" class="btn-secondary">Open Full Size</a>
+        </div>
+      </div>
+
+      <div class="nft-info">
+        <h2 id="nftName"></h2>
+        <p id="nftDescription" class="description"></p>
+
+        <div class="token-id">
+          Token ID: <span id="tokenId"></span>
+        </div>
+
+        <h3>Attributes</h3>
+        <div id="attributes" class="attributes-grid"></div>
+
+        <div class="navigation">
+          <button id="prevBtn" class="btn-nav">← Previous</button>
+          <button id="nextBtn" class="btn-nav">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="error" class="error" style="display: none;">
+      <h2>NFT Not Found</h2>
+      <p>The requested NFT could not be found.</p>
+      <a href="/" class="btn-primary">Back to Gallery</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>NFT Contract: <a href="https://etherscan.io/address/0x3965dEE5ef611d4dd74FC6B6c54c37F643208A5C" target="_blank">0x3965...208A5C</a></p>
+  </footer>
+
+  <script type="module" src="./scripts/nft.js"></script>
+</body>
+</html>

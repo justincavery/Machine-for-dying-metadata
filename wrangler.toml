@@ -1,0 +1,12 @@
+name = "nft-api"
+main = "workers/src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nft-metadata-db"
+database_id = "8d1f33b2-791c-4596-bc38-092c2430f2ca"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "nft-images"

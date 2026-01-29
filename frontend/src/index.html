@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Machine For Dying - NFT Viewer</title>
+  <meta name="description" content="Explore the A Machine For Dying NFT collection">
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <h1><a href="/">A Machine For Dying</a></h1>
+      <nav>
+        <a href="/">Gallery</a>
+        <a href="/attributes.html">Attributes</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="search-section">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by token ID or name..." autocomplete="off">
+        <button id="searchButton">Search</button>
+      </div>
+      <div class="filter-container">
+        <select id="traitFilter">
+          <option value="">Filter by trait...</option>
+        </select>
+        <select id="valueFilter" disabled>
+          <option value="">Select trait first...</option>
+        </select>
+        <button id="clearFilters" style="display: none;">Clear Filters</button>
+      </div>
+    </section>
+
+    <section class="stats-bar" id="statsBar">
+      <span id="totalCount">Loading...</span>
+    </section>
+
+    <section class="gallery">
+      <div id="nftGrid" class="nft-grid"></div>
+      <div id="loading" class="loading" style="display: none;">Loading...</div>
+      <button id="loadMore" class="load-more" style="display: none;">Load More</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>NFT Contract: <a href="https://etherscan.io/address/0x3965dEE5ef611d4dd74FC6B6c54c37F643208A5C" target="_blank">0x3965...208A5C</a></p>
+  </footer>
+
+  <script type="module" src="./scripts/main.js"></script>
+</body>
+</html>
