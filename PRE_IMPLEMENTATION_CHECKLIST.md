@@ -21,9 +21,9 @@ Please gather the following information before proceeding:
 
 - [ ] **Cloudflare Account Created**: Yes/No
   - If No: Create free account at https://dash.cloudflare.com/sign-up
-- [ ] **Account Email**: _________________
-- [ ] **Account ID**: _________________ (found in Cloudflare Dashboard)
-- [ ] **API Token Created**: Yes/No
+- [ ] **Account Email**: justincavery@gmai.com
+- [ ] **Account ID**: afe03c709e863bbdc506ec2ff7c11f28
+- [ ] **API Token Created**: Yes
   - Needed for: Automated deployments via GitHub Actions (optional)
   - Permissions needed: Edit Workers, Edit Pages, Edit D1, Edit R2
 
@@ -44,15 +44,14 @@ For indexing NFT metadata from the blockchain:
   - Suitable for proof of concept
 
 **Information Needed:**
-- [ ] **RPC URL**: _________________
-- [ ] **API Key** (if using Alchemy/Infura): _________________
+- [ ] **RPC URL**: https://eth-mainnet.nftx.xyz/a/shahv8futobaiwop
 
 **Action Required:** 🟡 Can use public RPC to start, upgrade if needed
 
 ### 4. Domain Name (Optional) 🟢
 
 - [ ] **Custom Domain**: Do you want a custom domain?
-  - Yes: Provide domain name: _________________
+  - Yes: Provide domain name: dyingmachines.simplethin.gs
   - No: Will use `*.pages.dev` subdomain (free)
   
 **Action Required:** 🟢 Optional - Cloudflare provides free subdomain
