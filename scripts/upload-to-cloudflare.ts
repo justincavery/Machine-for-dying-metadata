@@ -5,6 +5,7 @@ import { execSync } from 'child_process';
 const INDEXED_DATA_DIR = path.join(process.cwd(), '..', 'indexed-data');
 const METADATA_DIR = path.join(INDEXED_DATA_DIR, 'metadata');
 const IMAGES_DIR = path.join(INDEXED_DATA_DIR, 'images');
+const THUMBS_DIR = path.join(process.cwd(), '..', 'thumbnails');
 
 interface NFTMetadata {
   name: string;
@@ -88,7 +89,7 @@ async function uploadToD1() {
 
 async function uploadToR2() {
   console.log('\n═══════════════════════════════════════════');
-  console.log('  Uploading to Cloudflare R2');
+  console.log('  Uploading SVGs to Cloudflare R2');
   console.log('═══════════════════════════════════════════\n');
 
   const files = await fs.readdir(IMAGES_DIR);
@@ -114,7 +115,54 @@ async function uploadToR2() {
     }
   }
 
-  console.log(`\n\n✓ R2 upload complete!`);
+  console.log(`\n\n✓ R2 SVG upload complete!`);
+  console.log(`  Uploaded: ${uploaded}`);
+  console.log(`  Failed: ${failed}`);
+}
+
+async function uploadThumbnailsToR2() {
+  console.log('\n═══════════════════════════════════════════');
+  console.log('  Uploading Thumbnails to Cloudflare R2');
+  console.log('═══════════════════════════════════════════\n');
+
+  let files: string[];
+  try {
+    files = await fs.readdir(THUMBS_DIR);
+  } catch {
+    console.log('No thumbnails directory found. Skipping thumbnail upload.');
+    console.log('Run `npx tsx generate-thumbnails.ts` to generate thumbnails first.');
+    return;
+  }
+
+  const webpFiles = files.filter(f => f.endsWith('.webp'));
+
+  if (webpFiles.length === 0) {
+    console.log('No WebP thumbnails found. Skipping thumbnail upload.');
+    return;
+  }
+
+  console.log(`Found ${webpFiles.length} WebP thumbnails to upload\n`);
+
+  let uploaded = 0;
+  let failed = 0;
+
+  for (const file of webpFiles) {
+    const filePath = path.join(THUMBS_DIR, file);
+    // Upload to thumb/ prefix in R2 bucket (Worker expects thumb/{tokenId}.webp)
+    try {
+      execSync(`wrangler r2 object put nft-images/thumb/${file} --file="${filePath}"`, {
+        stdio: 'pipe',
+        cwd: path.join(process.cwd(), '..'),
+      });
+      uploaded++;
+      process.stdout.write(`\rUploaded: ${uploaded}/${webpFiles.length}`);
+    } catch (error) {
+      failed++;
+      console.error(`\n✗ Failed to upload thumb/${file}`);
+    }
+  }
+
+  console.log(`\n\n✓ R2 thumbnail upload complete!`);
   console.log(`  Uploaded: ${uploaded}`);
   console.log(`  Failed: ${failed}`);
 }
@@ -137,8 +185,11 @@ async function main() {
   // Upload to D1 (database)
   await uploadToD1();
 
-  // Upload to R2 (images)
+  // Upload to R2 (SVG images)
   await uploadToR2();
+
+  // Upload to R2 (WebP thumbnails)
+  await uploadThumbnailsToR2();
 
   console.log('\n═══════════════════════════════════════════');
   console.log('  All uploads complete!');
