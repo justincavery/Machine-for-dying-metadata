@@ -57,9 +57,13 @@ export async function fetchAttributeValues(traitType) {
 }
 
 export function getImageURL(tokenId) {
-  return `${API_BASE}/api/image/${tokenId}`;
+  return `/img/${tokenId}.svg`;
 }
 
 export function getThumbURL(tokenId) {
-  return `${API_BASE}/api/thumb/${tokenId}`;
+  return `/img/${tokenId}.webp`;
+}
+
+export function getNFTPageURL(tokenId) {
+  return `/nft/${tokenId}`;
 }

@@ -1,8 +1,18 @@
-import { fetchNFT, getImageURL } from './api.js';
+import { fetchNFT, getImageURL, getNFTPageURL } from './api.js';
 
-// Get token ID from URL
-const params = new URLSearchParams(window.location.search);
-const tokenId = params.get('id');
+// Get token ID from URL path (/nft/123) or query string (?id=123) for backwards compatibility
+function getTokenIdFromURL() {
+  // Try path first: /nft/123
+  const pathMatch = window.location.pathname.match(/\/nft\/(\d+)/);
+  if (pathMatch) {
+    return pathMatch[1];
+  }
+  // Fallback to query string: ?id=123
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id');
+}
+
+const tokenId = getTokenIdFromURL();
 
 // DOM Elements
 const loadingEl = document.getElementById('loading');
@@ -95,13 +105,13 @@ downloadBtn.addEventListener('click', async () => {
 prevBtn.addEventListener('click', () => {
   const prev = parseInt(tokenId) - 1;
   if (prev >= 0) {
-    window.location.href = `/nft.html?id=${prev}`;
+    window.location.href = getNFTPageURL(prev);
   }
 });
 
 nextBtn.addEventListener('click', () => {
   const next = parseInt(tokenId) + 1;
-  window.location.href = `/nft.html?id=${next}`;
+  window.location.href = getNFTPageURL(next);
 });
 
 // Keyboard navigation

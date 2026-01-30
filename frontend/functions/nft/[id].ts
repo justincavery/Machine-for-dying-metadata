@@ -1,5 +1,5 @@
-// Cloudflare Pages Function to inject dynamic meta tags for NFT detail pages
-// This runs on the edge and modifies the HTML before it's sent to the client
+// Cloudflare Pages Function for clean NFT URLs: /nft/123
+// Serves nft.html with dynamic meta tags based on token ID
 
 const API_BASE = 'https://nft-api.simplethings.workers.dev';
 const SITE_URL = 'https://diabolicalmachines.simplethin.gs';
@@ -11,15 +11,18 @@ interface NFTData {
 }
 
 export const onRequest: PagesFunction = async (context) => {
-  // Get the original response (the static nft.html)
-  const response = await context.next();
+  const tokenId = context.params.id as string;
 
-  // Get the token ID from query params
-  const url = new URL(context.request.url);
-  const tokenId = url.searchParams.get('id');
+  // Validate token ID is a number
+  if (!/^\d+$/.test(tokenId)) {
+    return new Response('Invalid token ID', { status: 400 });
+  }
 
-  // If no token ID, return original page
-  if (!tokenId) {
+  // Fetch the static nft.html
+  const assetUrl = new URL('/nft.html', context.request.url);
+  const response = await context.env.ASSETS.fetch(assetUrl);
+
+  if (!response.ok) {
     return response;
   }
 
@@ -28,6 +31,7 @@ export const onRequest: PagesFunction = async (context) => {
   try {
     const apiResponse = await fetch(`${API_BASE}/api/nft/${tokenId}`);
     if (!apiResponse.ok) {
+      // Return page without dynamic meta if NFT not found
       return response;
     }
     nft = await apiResponse.json();
@@ -39,8 +43,8 @@ export const onRequest: PagesFunction = async (context) => {
   let html = await response.text();
 
   // Build the meta tag replacements
-  const pageUrl = `${SITE_URL}/nft.html?id=${tokenId}`;
-  const imageUrl = `${API_BASE}/api/thumb/${tokenId}`;
+  const pageUrl = `${SITE_URL}/nft/${tokenId}`;
+  const imageUrl = `${SITE_URL}/img/${tokenId}.webp`;
   // Title: 50-60 chars optimal
   const title = `${nft.name} | On-Chain Animated NFT Collection`;
   // Description: 110-160 chars optimal
@@ -94,11 +98,11 @@ export const onRequest: PagesFunction = async (context) => {
     `<meta name="twitter:image" content="${imageUrl}">`
   );
 
-  // Return modified HTML
+  // Return modified HTML with long cache for HTML (it has unique meta per NFT)
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html;charset=UTF-8',
-      ...Object.fromEntries(response.headers),
+      'Cache-Control': 'public, max-age=86400', // 1 day cache for HTML
     },
   });
 };

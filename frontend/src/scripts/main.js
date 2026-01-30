@@ -1,4 +1,4 @@
-import { fetchNFTs, searchNFTs, fetchStats, fetchAttributes, fetchAttributeValues, getImageURL, getThumbURL } from './api.js';
+import { fetchNFTs, searchNFTs, fetchStats, fetchAttributes, fetchAttributeValues, getImageURL, getThumbURL, getNFTPageURL } from './api.js';
 
 // State
 let currentPage = 1;
@@ -292,7 +292,7 @@ function createNFTCard(nft) {
   });
 
   card.addEventListener('click', () => {
-    window.location.href = `/nft.html?id=${nft.token_id}`;
+    window.location.href = getNFTPageURL(nft.token_id);
   });
 
   return card;
