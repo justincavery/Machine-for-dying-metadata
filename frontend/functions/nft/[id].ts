@@ -44,11 +44,11 @@ export const onRequest: PagesFunction = async (context) => {
 
   // Build the meta tag replacements
   const pageUrl = `${SITE_URL}/nft/${tokenId}`;
-  const imageUrl = `${SITE_URL}/img/${tokenId}.webp`;
-  // Title: 50-60 chars optimal
-  const title = `${nft.name} | On-Chain Animated NFT Collection`;
+  const ogImageUrl = `${SITE_URL}/og/${tokenId}.png`;
+  // Title: 50-60 chars optimal - "A Machine For Dying #42 | On-Chain Animated NFT"
+  const title = `A Machine For Dying #${tokenId} | On-Chain Animated NFT`;
   // Description: 110-160 chars optimal
-  const description = `View ${nft.name}. Resurrected from the blockchain—an on-chain animated NFT exploring the Worker in a Box, trapped and toiling forever.`;
+  const description = `View A Machine For Dying #${tokenId}. Resurrected from the blockchain—an on-chain animated NFT exploring the Worker in a Box, trapped and toiling forever.`;
 
   // Replace title
   html = html.replace(
@@ -77,7 +77,7 @@ export const onRequest: PagesFunction = async (context) => {
   );
   html = html.replace(
     /<meta property="og:image" content="[^"]*">/,
-    `<meta property="og:image" content="${imageUrl}">`
+    `<meta property="og:image" content="${ogImageUrl}">`
   );
 
   // Replace Twitter tags
@@ -95,7 +95,7 @@ export const onRequest: PagesFunction = async (context) => {
   );
   html = html.replace(
     /<meta name="twitter:image" content="[^"]*">/,
-    `<meta name="twitter:image" content="${imageUrl}">`
+    `<meta name="twitter:image" content="${ogImageUrl}">`
   );
 
   // Return modified HTML with long cache for HTML (it has unique meta per NFT)
