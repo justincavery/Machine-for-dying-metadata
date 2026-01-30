@@ -1,4 +1,4 @@
-import { fetchNFTs, searchNFTs, fetchStats, fetchAttributes, fetchAttributeValues, getImageURL } from './api.js';
+import { fetchNFTs, searchNFTs, fetchStats, fetchAttributes, fetchAttributeValues, getImageURL, getThumbURL } from './api.js';
 
 // State
 let currentPage = 1;
@@ -24,10 +24,22 @@ async function init() {
   await Promise.all([
     loadStats(),
     loadTraitFilters(),
-    loadNFTs(),
   ]);
 
   setupEventListeners();
+
+  // Check for URL query params (e.g., ?trait_type=Machine&trait_value=Conveyor)
+  const urlParams = new URLSearchParams(window.location.search);
+  const traitType = urlParams.get('trait_type');
+  const traitValue = urlParams.get('trait_value');
+
+  if (traitType && traitValue) {
+    // Apply filter from URL
+    await applyFilterFromURL(traitType, traitValue);
+  } else {
+    // Normal load
+    await loadNFTs();
+  }
 }
 
 function setupEventListeners() {
@@ -108,6 +120,12 @@ async function handleValueFilterChange() {
   searchInput.value = '';
   clearFilters.style.display = 'inline-block';
 
+  // Update URL with filter params
+  const url = new URL(window.location);
+  url.searchParams.set('trait_type', traitType);
+  url.searchParams.set('trait_value', traitValue);
+  window.history.replaceState({}, '', url);
+
   await performSearch();
 }
 
@@ -120,10 +138,45 @@ async function handleClearFilters() {
   valueFilter.innerHTML = '<option value="">Select trait first...</option>';
   clearFilters.style.display = 'none';
 
+  // Clear URL params
+  window.history.replaceState({}, '', window.location.pathname);
+
   currentPage = 1;
   hasMore = true;
   grid.innerHTML = '';
   await loadNFTs();
+}
+
+// Apply filter from URL query parameters
+async function applyFilterFromURL(traitType, traitValue) {
+  // Set the trait filter dropdown
+  traitFilter.value = traitType;
+
+  // Load values for this trait type
+  try {
+    const { values } = await fetchAttributeValues(traitType);
+    valueFilter.innerHTML = '<option value="">Select value...</option>';
+    for (const item of values) {
+      const option = document.createElement('option');
+      option.value = item.value;
+      option.textContent = `${item.value} (${item.count})`;
+      valueFilter.appendChild(option);
+    }
+    valueFilter.disabled = false;
+
+    // Set the value filter dropdown
+    valueFilter.value = traitValue;
+
+    // Apply the filter
+    currentFilters = { trait_type: traitType, trait_value: traitValue };
+    clearFilters.style.display = 'inline-block';
+
+    await performSearch();
+  } catch (error) {
+    console.error('Failed to apply URL filter:', error);
+    // Fall back to loading all NFTs
+    await loadNFTs();
+  }
 }
 
 async function handleSearch() {
@@ -201,9 +254,14 @@ function createNFTCard(nft) {
   card.className = 'nft-card';
 
   const img = document.createElement('img');
-  img.src = getImageURL(nft.token_id);
+  // Use thumbnail for gallery (smaller, static, ~10KB vs ~380KB)
+  img.src = getThumbURL(nft.token_id);
   img.alt = nft.name;
   img.loading = 'lazy';
+
+  // Store full image URL for hover
+  img.dataset.fullSrc = getImageURL(nft.token_id);
+  img.dataset.thumbSrc = getThumbURL(nft.token_id);
 
   const info = document.createElement('div');
   info.className = 'nft-card-info';
@@ -211,6 +269,27 @@ function createNFTCard(nft) {
 
   card.appendChild(img);
   card.appendChild(info);
+
+  // Hover behavior: load animated SVG after 300ms hover
+  let hoverTimeout = null;
+  card.addEventListener('mouseenter', () => {
+    hoverTimeout = setTimeout(() => {
+      if (img.src !== img.dataset.fullSrc) {
+        img.src = img.dataset.fullSrc;
+      }
+    }, 300);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (hoverTimeout) {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = null;
+    }
+    // Revert to thumbnail when not hovering
+    if (img.src !== img.dataset.thumbSrc) {
+      img.src = img.dataset.thumbSrc;
+    }
+  });
 
   card.addEventListener('click', () => {
     window.location.href = `/nft.html?id=${nft.token_id}`;

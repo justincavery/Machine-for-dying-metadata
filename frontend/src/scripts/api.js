@@ -59,3 +59,7 @@ export async function fetchAttributeValues(traitType) {
 export function getImageURL(tokenId) {
   return `${API_BASE}/api/image/${tokenId}`;
 }
+
+export function getThumbURL(tokenId) {
+  return `${API_BASE}/api/thumb/${tokenId}`;
+}

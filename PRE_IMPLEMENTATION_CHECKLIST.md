@@ -44,7 +44,7 @@ For indexing NFT metadata from the blockchain:
   - Suitable for proof of concept
 
 **Information Needed:**
-- [ ] **RPC URL**: https://eth-mainnet.nftx.xyz/a/shahv8futobaiwop
+- [ ] **RPC URL**: https://eth.llamarpc.com
 
 **Action Required:** 🟡 Can use public RPC to start, upgrade if needed
 

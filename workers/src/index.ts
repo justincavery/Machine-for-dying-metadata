@@ -77,6 +77,7 @@ async function handleListNFTs(url: URL, env: Env): Promise<Response> {
       token_id: nft.token_id,
       name: nft.name,
       image_url: `/api/image/${nft.token_id}`,
+      thumb_url: `/api/thumb/${nft.token_id}`,
     })) || [],
     total: totalCount,
     page,
@@ -133,6 +134,7 @@ async function handleSearch(url: URL, env: Env): Promise<Response> {
       token_id: nft.token_id,
       name: nft.name,
       image_url: `/api/image/${nft.token_id}`,
+      thumb_url: `/api/thumb/${nft.token_id}`,
     })) || [],
     query: { q, trait_type: traitType, trait_value: traitValue },
   });
@@ -151,6 +153,24 @@ async function handleGetImage(tokenId: string, env: Env): Promise<Response> {
       ...corsHeaders,
       'Content-Type': 'image/svg+xml',
       'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
+}
+
+async function handleGetThumbnail(tokenId: string, env: Env): Promise<Response> {
+  const key = `thumb/${tokenId}.webp`;
+  const object = await env.IMAGES.get(key);
+
+  if (!object) {
+    // Fallback to full image if thumbnail doesn't exist
+    return handleGetImage(tokenId, env);
+  }
+
+  return new Response(object.body, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'image/webp',
+      'Cache-Control': 'public, max-age=3600',  // 1 hour during dev, increase later
     },
   });
 }
@@ -256,6 +276,12 @@ export default {
         return handleGetImage(imageMatch[1], env);
       }
 
+      // /api/thumb/:tokenId - static thumbnail (WebP)
+      const thumbMatch = path.match(/^\/api\/thumb\/(\d+)$/);
+      if (thumbMatch) {
+        return handleGetThumbnail(thumbMatch[1], env);
+      }
+
       // Health check
       if (path === '/api/health') {
         return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() });
@@ -269,7 +295,8 @@ export default {
           endpoints: {
             'GET /api/nfts': 'List NFTs (params: page, limit)',
             'GET /api/nft/:tokenId': 'Get NFT details',
-            'GET /api/image/:tokenId': 'Get NFT image (SVG)',
+            'GET /api/image/:tokenId': 'Get NFT image (animated SVG)',
+            'GET /api/thumb/:tokenId': 'Get NFT thumbnail (static WebP)',
             'GET /api/search': 'Search NFTs (params: q, trait_type, trait_value)',
             'GET /api/stats': 'Get collection statistics',
             'GET /api/attributes': 'List all trait types',

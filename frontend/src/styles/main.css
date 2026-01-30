@@ -196,6 +196,23 @@ button:hover {
   background-color: var(--bg-secondary);
 }
 
+/* Pause SVG animations in gallery for performance */
+.nft-card img[src*=".svg"] {
+  /* SVG animations are paused by default in gallery */
+}
+
+/* For embedded SVGs, pause all animations */
+.nft-card svg,
+.nft-card svg * {
+  animation-play-state: paused !important;
+}
+
+/* Enable animations on hover after transition */
+.nft-card:hover svg,
+.nft-card:hover svg * {
+  animation-play-state: running !important;
+}
+
 .nft-card-info {
   padding: 1rem;
 }

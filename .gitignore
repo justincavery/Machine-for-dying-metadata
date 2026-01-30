@@ -10,13 +10,19 @@ out/
 # Docs
 docs/
 
-# Dotenv file
+# Dotenv files (may contain API keys)
 .env
+.env.*
+**/.env
 
 # Node.js
 node_modules/
 
-# Indexed data (large, generated)
+# Extracted/generated data (stored in Cloudflare R2/D1, not git)
+# These can be regenerated from the blockchain if needed
+images/
+thumbnails/
+uri/
 indexed-data/
 
 # Build outputs

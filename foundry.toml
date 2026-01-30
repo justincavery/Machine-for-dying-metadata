@@ -4,4 +4,10 @@ out = "out"
 libs = ["lib"]
 fs_permissions = [{ access = "read-write", path = "./"}]
 
+# Increase memory limit for large tokenURI responses
+memory_limit = 1073741824  # 1GB (default is 128MB)
+
+# Increase gas limit for view calls
+gas_limit = "18446744073709551615"
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

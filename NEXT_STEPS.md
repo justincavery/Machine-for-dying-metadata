@@ -73,7 +73,7 @@ CLOUDFLARE:
 
 ETHEREUM RPC:
 - Provider: NFTX
-- RPC URL: https://eth-mainnet.nftx.xyz/a/shahv8futobaiwop
+- RPC URL: https://eth.llamarpc.com
 
 TIMELINE:
 - Target: ASAP

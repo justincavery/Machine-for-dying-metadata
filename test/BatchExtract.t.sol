@@ -21,8 +21,8 @@ contract BatchExtractTest is Test {
     ERC721 internal constant NFT_CONTRACT = ERC721(0x3965dEE5ef611d4dd74FC6B6c54c37F643208A5C);
 
     // Configure batch range here - extract in batches of 10
-    uint256 constant START_TOKEN = 0;
-    uint256 constant END_TOKEN = 10;  // Extract 10 tokens at a time
+    uint256 constant START_TOKEN = 5975;
+    uint256 constant END_TOKEN = 6000;  // Extract 10 tokens at a time
 
     function testBatchExtractURI() public {
         uint256 totalSupply = DEPLOYED_CLIFFORD.totalSupply();
