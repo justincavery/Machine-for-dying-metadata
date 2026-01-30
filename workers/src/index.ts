@@ -175,6 +175,23 @@ async function handleGetThumbnail(tokenId: string, env: Env): Promise<Response> 
   });
 }
 
+async function handleGetOGImage(tokenId: string, env: Env): Promise<Response> {
+  const key = `og/${tokenId}.png`;
+  const object = await env.IMAGES.get(key);
+
+  if (!object) {
+    return new Response('OG image not found', { status: 404, headers: corsHeaders });
+  }
+
+  return new Response(object.body, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
+}
+
 async function handleStats(env: Env): Promise<Response> {
   const total = await env.DB.prepare(
     'SELECT COUNT(*) as count FROM nfts'
@@ -282,6 +299,12 @@ export default {
         return handleGetThumbnail(thumbMatch[1], env);
       }
 
+      // /api/og/:tokenId - OG image (PNG)
+      const ogMatch = path.match(/^\/api\/og\/(\d+)$/);
+      if (ogMatch) {
+        return handleGetOGImage(ogMatch[1], env);
+      }
+
       // Health check
       if (path === '/api/health') {
         return jsonResponse({ status: 'ok', timestamp: new Date().toISOString() });
@@ -297,6 +320,7 @@ export default {
             'GET /api/nft/:tokenId': 'Get NFT details',
             'GET /api/image/:tokenId': 'Get NFT image (animated SVG)',
             'GET /api/thumb/:tokenId': 'Get NFT thumbnail (static WebP)',
+            'GET /api/og/:tokenId': 'Get OG image for social sharing (PNG)',
             'GET /api/search': 'Search NFTs (params: q, trait_type, trait_value)',
             'GET /api/stats': 'Get collection statistics',
             'GET /api/attributes': 'List all trait types',
