@@ -176,7 +176,7 @@ async function handleGetThumbnail(tokenId: string, env: Env): Promise<Response> 
 }
 
 async function handleGetOGImage(tokenId: string, env: Env): Promise<Response> {
-  const key = `og/${tokenId}.png`;
+  const key = `og/${tokenId}.jpg`;
   const object = await env.IMAGES.get(key);
 
   if (!object) {
@@ -186,7 +186,7 @@ async function handleGetOGImage(tokenId: string, env: Env): Promise<Response> {
   return new Response(object.body, {
     headers: {
       ...corsHeaders,
-      'Content-Type': 'image/png',
+      'Content-Type': 'image/jpeg',
       'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });

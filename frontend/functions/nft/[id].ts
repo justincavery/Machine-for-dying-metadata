@@ -44,7 +44,7 @@ export const onRequest: PagesFunction = async (context) => {
 
   // Build the meta tag replacements
   const pageUrl = `${SITE_URL}/nft/${tokenId}`;
-  const ogImageUrl = `${SITE_URL}/og/${tokenId}.png`;
+  const ogImageUrl = `${SITE_URL}/og/${tokenId}.jpg`;
   // Title: 50-60 chars optimal - "A Machine For Dying #42 | On-Chain Animated NFT"
   const title = `A Machine For Dying #${tokenId} | On-Chain Animated NFT`;
   // Description: 110-160 chars optimal

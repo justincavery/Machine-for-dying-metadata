@@ -13,8 +13,8 @@ const OG_DIR = path.join(__dirname, '..', 'og-images');
 const TOTAL_NFTS = 6000;
 const WIDTH = 1200;
 const HEIGHT = 630;
-const PARALLEL_UPLOADS = 10;
 const PARALLEL_RENDERS = 6; // Number of browser tabs to use in parallel
+const JPEG_QUALITY = 90; // 0-100
 
 // Generate SVG for an NFT
 function generateOGSvg(tokenId: number): string {
@@ -86,7 +86,7 @@ function generateOGSvg(tokenId: number): string {
 async function generateOGImages(limit: number = TOTAL_NFTS) {
   console.log('═══════════════════════════════════════════');
   console.log('  Generate OG Images for Social Sharing');
-  console.log(`  Generating: ${limit} images`);
+  console.log(`  Generating: ${limit} images (JPEG @ ${JPEG_QUALITY}% quality)`);
   console.log('═══════════════════════════════════════════\n');
 
   // Ensure output directory exists
@@ -95,7 +95,7 @@ async function generateOGImages(limit: number = TOTAL_NFTS) {
   }
 
   // Check how many already exist
-  const existingFiles = fs.readdirSync(OG_DIR).filter(f => f.endsWith('.png'));
+  const existingFiles = fs.readdirSync(OG_DIR).filter(f => f.endsWith('.jpg'));
   console.log(`Found ${existingFiles.length} existing OG images`);
 
   // Build list of tokens to generate
@@ -103,7 +103,7 @@ async function generateOGImages(limit: number = TOTAL_NFTS) {
   let skipped = 0;
 
   for (let tokenId = 0; tokenId < limit; tokenId++) {
-    const outputPath = path.join(OG_DIR, `${tokenId}.png`);
+    const outputPath = path.join(OG_DIR, `${tokenId}.jpg`);
     if (fs.existsSync(outputPath)) {
       skipped++;
     } else {
@@ -146,7 +146,7 @@ async function generateOGImages(limit: number = TOTAL_NFTS) {
 
     await Promise.all(batch.map(async (tokenId, index) => {
       const page = pages[index];
-      const outputPath = path.join(OG_DIR, `${tokenId}.png`);
+      const outputPath = path.join(OG_DIR, `${tokenId}.jpg`);
 
       try {
         const svg = generateOGSvg(tokenId);
@@ -168,7 +168,8 @@ async function generateOGImages(limit: number = TOTAL_NFTS) {
 
         await page.screenshot({
           path: outputPath,
-          type: 'png',
+          type: 'jpeg',
+          quality: JPEG_QUALITY,
           clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT }
         });
 
@@ -197,7 +198,7 @@ async function generateOGImages(limit: number = TOTAL_NFTS) {
   console.log(`  Failed: ${failed}`);
 
   // Calculate total size
-  const files = fs.readdirSync(OG_DIR).filter(f => f.endsWith('.png'));
+  const files = fs.readdirSync(OG_DIR).filter(f => f.endsWith('.jpg'));
   const totalSize = files.reduce((sum, f) => sum + fs.statSync(path.join(OG_DIR, f)).size, 0);
   console.log(`  Total size: ${(totalSize / 1024 / 1024).toFixed(1)} MB`);
   console.log(`  Average size: ${Math.round(totalSize / files.length / 1024)} KB per image`);
@@ -209,35 +210,30 @@ async function uploadToR2() {
   console.log('═══════════════════════════════════════════\n');
 
   const files = fs.readdirSync(OG_DIR)
-    .filter(f => f.endsWith('.png'))
+    .filter(f => f.endsWith('.jpg'))
     .sort((a, b) => parseInt(a) - parseInt(b));
 
-  console.log(`Found ${files.length} PNG files to upload\n`);
+  console.log(`Found ${files.length} JPG files to upload\n`);
 
   let uploaded = 0;
   let failed = 0;
   const cwd = path.join(__dirname, '..');
 
-  // Upload in batches for better progress tracking
-  for (let i = 0; i < files.length; i += PARALLEL_UPLOADS) {
-    const batch = files.slice(i, i + PARALLEL_UPLOADS);
-
-    await Promise.all(batch.map(async (file) => {
-      const filePath = path.join(OG_DIR, file);
-      try {
-        execSync(
-          `wrangler r2 object put nft-images/og/${file} --file="${filePath}" --content-type="image/png" --remote`,
-          { stdio: 'pipe', cwd }
-        );
-        uploaded++;
-      } catch {
-        failed++;
-        console.error(`Failed to upload og/${file}`);
+  // Upload sequentially with progress
+  for (const file of files) {
+    const filePath = path.join(OG_DIR, file);
+    try {
+      execSync(
+        `wrangler r2 object put nft-images/og/${file} --file="${filePath}" --content-type="image/jpeg" --remote`,
+        { stdio: 'inherit', cwd }
+      );
+      uploaded++;
+      if (uploaded % 100 === 0) {
+        console.log(`\nUploaded: ${uploaded}/${files.length}`);
       }
-    }));
-
-    if ((uploaded + failed) % 100 === 0 || i + PARALLEL_UPLOADS >= files.length) {
-      console.log(`Uploaded: ${uploaded}/${files.length}`);
+    } catch {
+      failed++;
+      console.error(`Failed to upload og/${file}`);
     }
   }
 
