@@ -226,7 +226,7 @@ async function uploadToR2() {
       const filePath = path.join(OG_DIR, file);
       try {
         execSync(
-          `wrangler r2 object put nft-images/og/${file} --file="${filePath}" --content-type="image/png"`,
+          `wrangler r2 object put nft-images/og/${file} --file="${filePath}" --content-type="image/png" --remote`,
           { stdio: 'pipe', cwd }
         );
         uploaded++;
